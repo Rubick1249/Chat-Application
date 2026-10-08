@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShieldChat | {{ me['name'] }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="chat-body">
+  <div class="app" id="app">
+    <!-- ===== Left: contacts ===== -->
+    <aside class="sidebar">
+      <header class="sidebar-head">
+        <div class="avatar">{{ me['name'][0] }}</div>
+        <div class="me-info">
+          <div class="me-name">{{ me['name'] }}</div>
+          <div class="me-email">{{ me['email'] }}</div>
+        </div>
+        {% if me['role'] == 'admin' %}
+          <a class="logout" href="{{ url_for('admin') }}" title="Security dashboard">📊</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('logout') }}" title="Log out">⏻</a>
+      </header>
+      <div class="sidebar-title">ShieldCorp · Contacts</div>
+      <ul id="contacts" class="contacts"></ul>
+      <div class="dlp-badge">🛡 DLP protection active</div>
+    </aside>
+
+    <!-- ===== Right: conversation ===== -->
+    <main class="chat">
+      <header class="chat-head">
+        <div class="avatar" id="peerAvatar">?</div>
+        <div>
+          <div class="peer-name" id="peerName">Select a contact</div>
+          <div class="peer-status" id="peerStatus"></div>
+        </div>
+      </header>
+
+      <div class="messages-wrap">
+        <!-- Messages: copy, cut, right-click and text selection are disabled here (Phase 5) -->
+        <section id="messages" class="messages no-copy">
+          <div class="empty-hint">Pick a colleague on the left to start chatting.</div>
+        </section>
+        <!-- Faint diagonal watermark with my email + time; pointer-events:none so it never blocks clicks -->
+        <div id="watermark" class="watermark" aria-hidden="true"></div>
+      </div>
+
+      <!-- AI tone hint (yellow, does not block) -->
+      <div id="toneHint" class="tone-hint" hidden>
+        <div class="tone-title">💡 Hint: This message can be conveyed in a more polite and professional way.</div>
+        <div class="tone-suggestion" id="toneSuggestion"></div>
+        <div class="tone-actions">
+          <button type="button" class="btn btn-primary" id="useSuggestion">Use suggestion</button>
+          <button type="button" class="btn" id="sendOriginal">Send original anyway</button>
+          <button type="button" class="btn" id="editTone">Edit</button>
+        </div>
+      </div>
+
+      <div class="status-line" id="statusLine" hidden></div>
+
+      <form id="composer" class="composer" autocomplete="off">
+        <input id="msgInput" type="text" placeholder="Type a message" maxlength="2000" disabled>
+        <button id="sendBtn" type="submit" disabled>➤</button>
+      </form>
+    </main>
+
+    <!-- Privacy screen shown when the window loses focus -->
+    <div id="privacyCover" class="privacy-cover" hidden>
+      <div>🔒 Chat hidden for privacy<br><small>Click or return to this window to continue</small></div>
+    </div>
+  </div>
+
+  <!-- ===== DLP policy-violation popup (red) ===== -->
+  <div id="dlpModal" class="modal-backdrop" hidden>
+    <div class="modal" role="alertdialog" aria-labelledby="dlpTitle">
+      <div class="modal-head" id="dlpTitle">Policy violation: message NOT sent</div>
+      <p class="modal-text" id="dlpText"></p>
+      <ul class="findings" id="dlpFindings"></ul>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="dlpEdit">Edit message</button>
+        <button type="button" class="btn btn-danger" id="dlpSendMasked">Send masked version</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script>
+    // Logged-in user, passed from the server. tojson safely escapes the values.
+    const ME = {
+      id: {{ me['user_id'] | tojson }},
+      name: {{ me['name'] | tojson }},
+      email: {{ me['email'] | tojson }}
+    };
+  </script>
+  <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='chat.js') }}"></script>
+</body>
+</html>

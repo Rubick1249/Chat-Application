@@ -1,0 +1,223 @@
+/* ShieldChat - WhatsApp-like enterprise theme (green / teal) */
+
+:root {
+  --teal-dark: #075e54;
+  --teal: #128c7e;
+  --green: #25d366;
+  --bubble-out: #d9fdd3;
+  --bubble-in: #ffffff;
+  --chat-bg: #efeae2;
+  --panel: #f0f2f5;
+  --text: #111b21;
+  --muted: #667781;
+  --danger: #d93025;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", Roboto, Arial, sans-serif; color: var(--text); }
+
+/* ---------- Login ---------- */
+.login-body {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, var(--teal-dark) 0 220px, #e6ebee 220px);
+  padding: 16px;
+}
+.login-card {
+  background: #fff; width: 100%; max-width: 380px; padding: 32px 28px;
+  border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, .15);
+}
+.brand { text-align: center; margin-bottom: 20px; }
+.brand-logo { font-size: 42px; }
+.brand h1 { margin: 6px 0 2px; color: var(--teal-dark); }
+.brand-sub { margin: 0; color: var(--muted); font-size: 14px; }
+.login-card label { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 4px; }
+.login-card input {
+  width: 100%; padding: 10px 12px; border: 1px solid #d1d7db; border-radius: 6px; font-size: 15px;
+}
+.login-card input:focus { outline: 2px solid var(--teal); border-color: transparent; }
+.login-card button {
+  width: 100%; margin-top: 22px; padding: 11px; border: 0; border-radius: 6px;
+  background: var(--teal); color: #fff; font-size: 15px; cursor: pointer;
+}
+.login-card button:hover { background: var(--teal-dark); }
+.login-error {
+  background: #fdecea; color: var(--danger); border: 1px solid #f5c2bd;
+  padding: 10px 12px; border-radius: 6px; font-size: 14px;
+}
+.login-foot { text-align: center; font-size: 12px; color: var(--muted); margin: 18px 0 0; }
+
+/* ---------- Chat layout ---------- */
+.chat-body { background: #d1d7db; height: 100vh; overflow: hidden; }
+.app { display: flex; height: 100vh; max-width: 1400px; margin: 0 auto; background: #fff; }
+
+.sidebar { width: 30%; min-width: 240px; border-right: 1px solid #e9edef; display: flex; flex-direction: column; }
+.sidebar-head, .chat-head {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+  background: var(--panel); min-height: 60px;
+}
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--teal); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;
+}
+.me-info { flex: 1; min-width: 0; }
+.me-name { font-weight: 600; }
+.me-email { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.logout { text-decoration: none; color: var(--muted); font-size: 20px; }
+.logout:hover { color: var(--danger); }
+.sidebar-title { padding: 10px 16px; font-size: 12px; color: var(--teal); font-weight: 600; text-transform: uppercase; }
+
+.contacts { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+.contact {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer;
+  border-bottom: 1px solid #f0f2f5;
+}
+.contact:hover { background: #f5f6f6; }
+.contact.active { background: #e9edef; }
+.contact .avatar { position: relative; }
+.dot {
+  position: absolute; right: 0; bottom: 0; width: 11px; height: 11px; border-radius: 50%;
+  background: #bbb; border: 2px solid #fff;
+}
+.dot.on { background: var(--green); }
+.contact-name { font-weight: 500; }
+.contact-email { font-size: 12px; color: var(--muted); }
+
+.chat { flex: 1; display: flex; flex-direction: column; position: relative; min-width: 0; }
+.peer-name { font-weight: 600; }
+.peer-status { font-size: 12px; color: var(--muted); }
+
+.messages {
+  flex: 1; overflow-y: auto; padding: 20px 7%; background: var(--chat-bg);
+  display: flex; flex-direction: column; gap: 4px; position: relative;
+}
+.empty-hint { margin: auto; color: var(--muted); background: #fff8; padding: 8px 14px; border-radius: 8px; }
+
+.bubble {
+  max-width: 65%; padding: 6px 10px 4px; border-radius: 8px; box-shadow: 0 1px .5px rgba(0,0,0,.13);
+  word-wrap: break-word; white-space: pre-wrap;
+}
+.bubble.out { align-self: flex-end; background: var(--bubble-out); }
+.bubble.in  { align-self: flex-start; background: var(--bubble-in); }
+.bubble .time { display: block; text-align: right; font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.composer { display: flex; gap: 8px; padding: 10px 16px; background: var(--panel); }
+.composer input {
+  flex: 1; padding: 11px 14px; border: 0; border-radius: 8px; font-size: 15px; background: #fff;
+}
+.composer input:focus { outline: none; }
+.composer button {
+  width: 46px; border: 0; border-radius: 50%; background: var(--teal); color: #fff; font-size: 18px; cursor: pointer;
+}
+.composer button:disabled, .composer input:disabled { opacity: .5; cursor: not-allowed; }
+
+@media (max-width: 700px) {
+  .sidebar { width: 38%; min-width: 0; }
+  .me-email, .contact-email { display: none; }
+  .bubble { max-width: 85%; }
+}
+
+.dlp-badge {
+  margin-top: auto; padding: 10px 16px; font-size: 12px; color: var(--teal-dark);
+  background: #e7f6f3; border-top: 1px solid #d3ece7;
+}
+
+/* ---------- Phase 3: DLP popup ---------- */
+[hidden] { display: none !important; }
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex;
+  align-items: center; justify-content: center; z-index: 50; padding: 16px;
+}
+.modal {
+  background: #fff; max-width: 520px; width: 100%; border-radius: 10px; overflow: hidden;
+  border-top: 6px solid var(--danger); box-shadow: 0 10px 40px rgba(0, 0, 0, .3);
+}
+.modal-head { background: #fdecea; color: var(--danger); font-weight: 700; padding: 14px 18px; font-size: 17px; }
+.modal-text { padding: 0 18px; margin: 14px 0 8px; line-height: 1.45; }
+.findings { margin: 0 18px; padding: 0; list-style: none; }
+.findings li { border: 1px solid #f5c2bd; background: #fff7f6; border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; font-size: 14px; }
+.findings .f-label { font-weight: 600; color: var(--danger); }
+.findings .f-value { font-family: Consolas, monospace; background: #fff; padding: 1px 5px; border-radius: 3px; }
+.findings .f-reason { color: var(--muted); font-size: 12px; margin-top: 3px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; padding: 12px 18px 16px; flex-wrap: wrap; }
+
+.btn { border: 1px solid #c9d1d6; background: #fff; border-radius: 6px; padding: 8px 14px; cursor: pointer; font-size: 14px; }
+.btn:hover { background: #f3f5f6; }
+.btn-primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+.btn-primary:hover { background: var(--teal-dark); }
+.btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn-danger:hover { background: #b3261e; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ---------- Phase 4: AI tone hint + status line ---------- */
+.tone-hint {
+  margin: 8px 16px 0; padding: 12px 14px; background: #fff8db; border: 1px solid #f1d675;
+  border-radius: 8px; font-size: 14px;
+}
+.tone-title { font-weight: 600; color: #7a5b00; }
+.tone-suggestion { margin: 8px 0; padding: 8px 10px; background: #fff; border-radius: 6px; border-left: 4px solid #f1c232; }
+.tone-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.status-line { padding: 4px 18px 0; font-size: 12px; color: var(--muted); background: var(--panel); }
+.status-line.checking::before { content: "⏳ "; }
+
+/* ---------- Phase 5: anti-exfiltration ---------- */
+.messages-wrap { flex: 1; position: relative; display: flex; min-height: 0; }
+.messages-wrap .messages { flex: 1; }
+
+/* No text selection inside the message area, so messages cannot be
+   highlighted and copied. (A deterrent: see the honesty note in chat.js.) */
+.no-copy { user-select: none; -webkit-user-select: none; }
+
+.watermark {
+  position: absolute; inset: 0; pointer-events: none; /* never blocks clicks/scroll */
+  background-repeat: repeat; opacity: .13; z-index: 2;
+}
+
+/* Privacy blur when the window loses focus. */
+.app.privacy .sidebar, .app.privacy .chat { filter: blur(9px); }
+.privacy-cover {
+  position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center;
+  text-align: center; font-size: 20px; color: var(--teal-dark); background: rgba(255, 255, 255, .35);
+}
+
+.toast {
+  position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); z-index: 60;
+  background: #323232; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .3); max-width: calc(100% - 32px);
+}
+
+/* Printing: hide everything, so Ctrl+P / File > Print gives a blank page. */
+@media print {
+  body { display: none !important; }
+}
+
+/* ---------- Phase 6: admin dashboard ---------- */
+.admin-body { background: var(--panel); min-height: 100vh; }
+.admin-head {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+  background: var(--teal-dark); color: #fff; padding: 14px 24px;
+}
+.admin-brand { font-size: 18px; font-weight: 700; }
+.admin-user { font-size: 13px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.admin-user a { color: #c8f4ea; }
+.live { color: #7dffb0; font-weight: 700; transition: color .2s; }
+.live.flash { color: #ff8a80; }
+.admin-main { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+.card { background: #fff; border-radius: 10px; padding: 16px; border-left: 5px solid var(--teal); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.card.red { border-left-color: var(--danger); }
+.card.amber { border-left-color: #f0a500; }
+.card-num { font-size: 30px; font-weight: 700; }
+.card-label { color: var(--muted); font-size: 13px; }
+.panel { background: #fff; border-radius: 10px; margin-top: 20px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.panel h2 { margin: 0 0 12px; font-size: 17px; }
+.panel h2 small { color: var(--muted); font-weight: 400; }
+.table-wrap { overflow-x: auto; }
+.incidents { width: 100%; border-collapse: collapse; font-size: 14px; }
+.incidents th { text-align: left; background: #f0f2f5; padding: 8px 10px; white-space: nowrap; }
+.incidents td { padding: 8px 10px; border-bottom: 1px solid #eef0f2; vertical-align: top; }
+.tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #e9edef; white-space: nowrap; }
+.tag-CARD, .tag-AADHAAR, .tag-PAN, .tag-BANK_ACCOUNT, .tag-IFSC { background: #fdecea; color: var(--danger); }
+.tag-AI_SENSITIVE { background: #f3e8fd; color: #7b1fa2; }
+.tag-COPY_ATTEMPT, .tag-BULK_PASTE { background: #fff4d6; color: #8a6100; }
+.tag-FAILED_LOGIN { background: #e8f0fe; color: #1a56c4; }
+.tag-LOCKOUT { background: #d93025; color: #fff; }

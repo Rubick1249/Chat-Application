@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShieldChat | Security Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="admin-body">
+  <header class="admin-head">
+    <div class="admin-brand">🛡 ShieldCorp Security Dashboard</div>
+    <div class="admin-user">
+      <span class="live" id="liveDot">● LIVE</span>
+      {{ me['email'] }}
+      <a href="{{ url_for('chat') }}">Chat</a>
+      <a href="{{ url_for('logout') }}">Log out</a>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section class="cards">
+      <div class="card"><div class="card-num" id="s_total_messages">–</div><div class="card-label">Total messages</div></div>
+      <div class="card red"><div class="card-num" id="s_dlp_blocks_today">–</div><div class="card-label">DLP blocks today</div></div>
+      <div class="card amber"><div class="card-num" id="s_copy_attempts">–</div><div class="card-label">Copy attempts</div></div>
+      <div class="card amber"><div class="card-num" id="s_failed_logins">–</div><div class="card-label">Failed logins</div></div>
+      <div class="card red"><div class="card-num" id="s_locked_accounts">–</div><div class="card-label">Locked accounts (now)</div></div>
+    </section>
+
+    <section class="panel">
+      <h2>Security incidents <small>(masked values only, latest 100)</small></h2>
+      <div class="table-wrap">
+        <table class="incidents">
+          <thead><tr><th>Time</th><th>User</th><th>Type</th><th>Details (masked)</th></tr></thead>
+          <tbody id="incidentRows"><tr><td colspan="4">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+  <script>
+    // Admin dashboard logic. Values come from users (e.g. typed emails), so
+    // they are inserted with textContent only, never innerHTML (prevents XSS).
+
+    /** Fetch the latest numbers and incidents from the server and redraw. */
+    async function refresh() {
+      const res = await fetch("/api/admin/summary");
+      if (!res.ok) return;
+      const data = await res.json();
+      for (const [key, value] of Object.entries(data.stats)) {
+        const el = document.getElementById("s_" + key);
+        if (el) el.textContent = value;
+      }
+      const body = document.getElementById("incidentRows");
+      body.replaceChildren();
+      if (!data.incidents.length) {
+        const tr = body.insertRow();
+        const td = tr.insertCell();
+        td.colSpan = 4;
+        td.textContent = "No incidents yet.";
+      }
+      data.incidents.forEach((inc) => {
+        const tr = body.insertRow();
+        tr.insertCell().textContent = inc.created_at.replace("T", " ");
+        tr.insertCell().textContent = inc.user_email;
+        const typeCell = tr.insertCell();
+        const tag = document.createElement("span");
+        tag.className = "tag tag-" + inc.type;
+        tag.textContent = inc.type;
+        typeCell.appendChild(tag);
+        tr.insertCell().textContent = inc.details || "";
+      });
+    }
+
+    // Live updates: the server pushes an "incident" event to the admins room
+    // the moment something happens, plus a 5-second poll as a safety net.
+    const socket = io();
+    socket.on("incident", () => {
+      refresh();
+      const dot = document.getElementById("liveDot");
+      dot.classList.add("flash");
+      setTimeout(() => dot.classList.remove("flash"), 800);
+    });
+    setInterval(refresh, 5000);
+    refresh();
+  </script>
+</body>
+</html>
